@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pal Engineering Shop | Premium Iron Works</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --iron-dark: #1a1a1a;
+            --iron-medium: #2d2d2d;
+            --iron-light: #3d3d3d;
+            --rust-orange: #d4622a;
+            --rust-gold: #c9a227;
+            --forge-red: #8b2500;
+            --cream: #f5f0e8;
+            --steel-gray: #6b7280;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Barlow', sans-serif; background: var(--iron-dark); color: var(--cream); overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--iron-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--rust-orange); border-radius: 4px; }
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        nav { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, rgba(26,26,26,0.95) 0%, transparent 100%); transition: all 0.4s ease; }
+        nav.scrolled { background: rgba(26,26,26,0.98); padding: 1rem 5%; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .logo { display: flex; align-items: center; gap: 1rem; }
+        .logo-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--rust-orange), var(--rust-gold)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--iron-dark); transform: rotate(-5deg); box-shadow: 4px 4px 0 var(--iron-light); }
+        .logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; line-height: 1; }
+        .logo-text span { display: block; font-size: 0.75rem; font-family: 'Barlow', sans-serif; font-weight: 300; letter-spacing: 4px; color: var(--rust-gold); }
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a { color: var(--cream); text-decoration: none; font-weight: 500; font-size: 0.95rem; letter-spacing: 1px; position: relative; padding-bottom: 5px; transition: color 0.3s ease; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--rust-orange); transition: width 0.3s ease; }
+        .nav-links a:hover { color: var(--rust-orange); }
+        .nav-links a:hover::after { width: 100%; }
+        .mobile-menu-btn { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 10px; }
+        .mobile-menu-btn span { width: 25px; height: 2px; background: var(--cream); transition: all 0.3s ease; }
+        .hero { min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; padding: 0 5%; }
+        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 80%, rgba(212, 98, 42, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(201, 162, 39, 0.1) 0%, transparent 50%), linear-gradient(135deg, var(--iron-dark) 0%, var(--iron-medium) 100%); }
+        .hero-pattern { position: absolute; top: 0; right: 0; width: 60%; height: 100%; opacity: 0.05; background-image: repeating-linear-gradient(0deg, transparent, transparent 50px, var(--rust-orange) 50px, var(--rust-orange) 51px), repeating-linear-gradient(90deg, transparent, transparent 50px, var(--rust-orange) 50px, var(--rust-orange) 51px); }
+        .hero-content { position: relative; z-index: 10; max-width: 800px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(212, 98, 42, 0.2); border: 1px solid var(--rust-orange); padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 500; letter-spacing: 2px; margin-bottom: 2rem; animation: fadeInUp 0.8s ease forwards; opacity: 0; }
+        .hero-badge::before { content: '⚙'; font-size: 1rem; }
+        .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 12vw, 9rem); line-height: 0.9; letter-spacing: 4px; animation: fadeInUp 0.8s ease 0.2s forwards; opacity: 0; }
+        .hero h1 .highlight { color: var(--rust-orange); position: relative; display: inline-block; }
+        .hero h1 .highlight::after { content: ''; position: absolute; bottom: 10px; left: 0; width: 100%; height: 8px; background: var(--rust-gold); opacity: 0.3; transform: skewX(-10deg); }
+        .hero-subtitle { font-size: 1.3rem; font-weight: 300; color: var(--steel-gray); margin: 2rem 0; max-width: 500px; line-height: 1.7; animation: fadeInUp 0.8s ease 0.4s forwards; opacity: 0; }
+        .hero-cta { display: flex; gap: 1.5rem; margin-top: 3rem; animation: fadeInUp 0.8s ease 0.6s forwards; opacity: 0; }
+        .btn-primary { background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); color: var(--cream); padding: 1rem 2.5rem; border: none; font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 1rem; letter-spacing: 1px; cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 98, 42, 0.4); }
+        .btn-secondary { background: transparent; color: var(--cream); padding: 1rem 2.5rem; border: 2px solid var(--steel-gray); font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 1rem; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-secondary:hover { border-color: var(--rust-orange); color: var(--rust-orange); background: rgba(212, 98, 42, 0.1); }
+        .hero-image { position: absolute; right: 5%; bottom: 10%; width: 45%; max-width: 600px; animation: floatIn 1s ease 0.8s forwards; opacity: 0; }
+        .hero-visual { position: relative; width: 100%; aspect-ratio: 1; }
+        .hero-visual-circle { position: absolute; border-radius: 50%; border: 1px solid; animation: rotate 30s linear infinite; }
+        .hero-visual-circle:nth-child(1) { width: 100%; height: 100%; border-color: rgba(212, 98, 42, 0.3); }
+        .hero-visual-circle:nth-child(2) { width: 80%; height: 80%; top: 10%; left: 10%; border-color: rgba(201, 162, 39, 0.3); animation-direction: reverse; animation-duration: 25s; }
+        .hero-visual-circle:nth-child(3) { width: 60%; height: 60%; top: 20%; left: 20%; border-color: rgba(139, 37, 0, 0.3); animation-duration: 20s; }
+        .hero-visual-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .hero-visual-center svg { width: 100px; height: 100px; fill: var(--cream); }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .owner-section { padding: 8rem 5%; background: var(--iron-medium); position: relative; overflow: hidden; }
+        .owner-section::before { content: '"'; position: absolute; top: 5%; left: 5%; font-family: 'Bebas Neue', sans-serif; font-size: 30rem; color: rgba(212, 98, 42, 0.05); line-height: 1; }
+        .owner-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; align-items: center; }
+        .owner-image { position: relative; }
+        .owner-image-frame { width: 100%; aspect-ratio: 3/4; background: linear-gradient(135deg, var(--iron-light), var(--iron-dark)); position: relative; overflow: hidden; }
+        .owner-image-frame::before { content: ''; position: absolute; top: -10px; left: -10px; right: 10px; bottom: 10px; border: 3px solid var(--rust-orange); }
+        .owner-image-frame::after { content: ''; position: absolute; top: 10px; left: 10px; right: -10px; bottom: -10px; border: 3px solid var(--rust-gold); }
+        .owner-avatar { width: 100%; height: 100%; background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 8rem; color: var(--cream); }
+        .owner-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 3px; margin-bottom: 1rem; }
+        .owner-content h2 span { color: var(--rust-orange); }
+        .owner-title { font-size: 1.2rem; color: var(--rust-gold); font-weight: 500; letter-spacing: 3px; margin-bottom: 2rem; }
+        .owner-quote { font-size: 1.4rem; font-weight: 300; line-height: 1.8; color: var(--steel-gray); font-style: italic; position: relative; padding-left: 2rem; border-left: 3px solid var(--rust-orange); }
+        .owner-stats { display: flex; gap: 3rem; margin-top: 3rem; }
+        .stat-item { text-align: center; }
+        .stat-number { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--rust-orange); line-height: 1; }
+        .stat-label { font-size: 0.9rem; color: var(--steel-gray); letter-spacing: 2px; margin-top: 0.5rem; }
+        .custom-highlight { padding: 5rem 5%; background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); text-align: center; position: relative; overflow: hidden; }
+        .custom-highlight::before { content: '⚙'; position: absolute; top: 50%; left: 10%; transform: translateY(-50%); font-size: 15rem; opacity: 0.1; }
+        .custom-highlight::after { content: '🔧'; position: absolute; top: 50%; right: 10%; transform: translateY(-50%); font-size: 15rem; opacity: 0.1; }
+        .custom-highlight h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: 3px; margin-bottom: 1rem; position: relative; z-index: 1; }
+        .custom-highlight p { font-size: 1.3rem; opacity: 0.9; max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+        .services { padding: 8rem 5%; background: var(--iron-dark); position: relative; }
+        .section-header { text-align: center; margin-bottom: 5rem; }
+        .section-tag { display: inline-block; background: rgba(212, 98, 42, 0.2); color: var(--rust-orange); padding: 0.5rem 1.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 3px; margin-bottom: 1.5rem; }
+        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 5rem); letter-spacing: 3px; line-height: 1.1; }
+        .section-title span { color: var(--rust-orange); }
+        .section-subtitle { font-size: 1.2rem; color: var(--steel-gray); margin-top: 1rem; font-weight: 300; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; max-width: 1400px; margin: 0 auto; }
+        .service-card { background: var(--iron-medium); padding: 3rem; position: relative; overflow: hidden; transition: all 0.4s ease; cursor: pointer; }
+        .service-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 0; background: var(--rust-orange); transition: height 0.4s ease; }
+        .service-card:hover::before { height: 100%; }
+        .service-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .service-icon { width: 80px; height: 80px; background: linear-gradient(135deg, rgba(212, 98, 42, 0.2), rgba(212, 98, 42, 0.1)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 2rem; transition: all 0.3s ease; }
+        .service-card:hover .service-icon { background: var(--rust-orange); transform: scale(1.1); }
+        .service-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; margin-bottom: 1rem; }
+        .service-card p { color: var(--steel-gray); line-height: 1.7; font-weight: 300; }
+        .service-features { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .service-feature { background: rgba(255,255,255,0.05); padding: 0.4rem 1rem; font-size: 0.85rem; color: var(--cream); border-left: 2px solid var(--rust-orange); }
+        .gallery { padding: 8rem 5%; background: var(--iron-dark); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1400px; margin: 0 auto; }
+        .gallery-item { aspect-ratio: 1; background: var(--iron-medium); position: relative; overflow: hidden; cursor: pointer; }
+        .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+        .gallery-item-bg { width: 100%; height: 100%; background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: all 0.4s ease; }
+        .gallery-item:nth-child(even) .gallery-item-bg { background: linear-gradient(135deg, var(--iron-light), var(--iron-medium)); }
+        .gallery-item:nth-child(3) .gallery-item-bg { background: linear-gradient(135deg, var(--rust-gold), var(--rust-orange)); }
+        .gallery-item:hover .gallery-item-bg { transform: scale(1.1); }
+        .gallery-item-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(transparent, rgba(26,26,26,0.9)); transform: translateY(100%); transition: transform 0.3s ease; }
+        .gallery-item:hover .gallery-item-overlay { transform: translateY(0); }
+        .gallery-item-overlay h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 1px; }
+        .contact { padding: 8rem 5%; background: linear-gradient(135deg, var(--iron-medium) 0%, var(--iron-dark) 100%); position: relative; }
+        .contact-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; }
+        .contact-info h2 { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 3px; margin-bottom: 1.5rem; }
+        .contact-info h2 span { color: var(--rust-orange); }
+        .contact-info > p { color: var(--steel-gray); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; }
+        .contact-details { display: flex; flex-direction: column; gap: 1.5rem; }
+        .contact-item { display: flex; align-items: center; gap: 1.5rem; }
+        .contact-icon { width: 60px; height: 60px; background: rgba(212, 98, 42, 0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .contact-text h4 { font-size: 0.9rem; color: var(--rust-gold); letter-spacing: 2px; margin-bottom: 0.3rem; }
+        .contact-text p { color: var(--cream); font-size: 1.1rem; margin: 0; }
+        .contact-text a { color: var(--cream); text-decoration: none; transition: color 0.3s ease; }
+        .contact-text a:hover { color: var(--rust-orange); }
+        .contact-form { background: var(--iron-dark); padding: 3rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 0.5rem; color: var(--steel-gray); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 1rem; background: var(--iron-medium); border: 2px solid var(--iron-light); color: var(--cream); font-family: 'Barlow', sans-serif; font-size: 1rem; transition: border-color 0.3s ease; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--rust-orange); }
+        .form-group textarea { min-height: 150px; resize: vertical; }
+        .form-submit { width: 100%; padding: 1.2rem; background: linear-gradient(135deg, var(--rust-orange), var(--forge-red)); border: none; color: var(--cream); font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 3px; cursor: pointer; transition: all 0.3s ease; }
+        .form-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212, 98, 42, 0.4); }
+        footer { background: var(--iron-dark); padding: 4rem 5% 2rem; border-top: 1px solid var(--iron-light); }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; }
+        .footer-brand h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; margin-bottom: 1rem; }
+        .footer-brand p { color: var(--steel-gray); line-height: 1.7; }
+        .footer-links h4 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 1.5rem; color: var(--rust-orange); }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--steel-gray); text-decoration: none; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--rust-orange); }
+        .footer-bottom { max-width: 1200px; margin: 3rem auto 0; padding-top: 2rem; border-top: 1px solid var(--iron-light); display: flex; justify-content: space-between; align-items: center; color: var(--steel-gray); font-size: 0.9rem; }
+        .social-links { display: flex; gap: 1rem; }
+        .social-links a { width: 40px; height: 40px; background: var(--iron-medium); display: flex; align-items: center; justify-content: center; color: var(--cream); text-decoration: none; transition: all 0.3s ease; }
+        .social-links a:hover { background: var(--rust-orange); transform: translateY(-3px); }
+        @media (max-width: 1024px) {
+            .hero-image { display: none; }
+            .hero-content { max-width: 100%; }
+            .owner-container, .contact-container { grid-template-columns: 1fr; }
+            .owner-image { max-width: 400px; margin: 0 auto; }
+            .footer-content { grid-template-columns: repeat(2, 1fr); }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-links { position: fixed; top: 0; right: -100%; width: 80%; max-width: 400px; height: 100vh; background: var(--iron-dark); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: right 0.4s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+            .nav-links.active { right: 0; }
+            .mobile-menu-btn { display: flex; z-index: 1001; }
+            .services-grid { grid-template-columns: 1fr; }
+            .owner-stats { flex-wrap: wrap; justify-content: center; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-item:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .footer-bottom { flex-direction: column; gap: 1.5rem; }
+            .hero-cta { flex-direction: column; }
+            .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">P</div>
+            <div class="logo-text">PAL ENGINEERING<span>PREMIUM IRON WORKS</span></div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="mobile-menu-btn"><span></span><span></span><span></span></div>
+    </nav>
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-pattern"></div>
+        <div class="hero-content">
+            <div class="hero-badge">TRUSTED QUALITY SINCE YEARS</div>
+            <h1>CRAFTING <span class="highlight">IRON</span><br>INTO ART</h1>
+            <p class="hero-subtitle">Premium quality iron works including grills, almirahs, showcases, and more. We build as per your custom requirements.</p>
+            <div class="hero-cta">
+                <a href="tel:9432941362" class="btn-primary">📞 Call Now: 9432941362</a>
+                <a href="#services" class="btn-secondary">View Our Services <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-visual">
+                <div class="hero-visual-circle"></div>
+                <div class="hero-visual-circle"></div>
+                <div class="hero-visual-circle"></div>
+                <div class="hero-visual-center"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            </div>
+        </div>
+    </section>
+    <section class="owner-section" id="about">
+        <div class="owner-container">
+            <div class="owner-image">
+                <div class="owner-image-frame"><div class="owner-avatar">SP</div></div>
+            </div>
+            <div class="owner-content">
+                <h2>MEET <span>SUDIP PAL</span></h2>
+                <p class="owner-title">FOUNDER & MASTER CRAFTSMAN</p>
+                <p class="owner-quote">"Every piece of iron tells a story. My passion is transforming raw metal into beautiful, functional works of art that protect and beautify your home. We create exactly what you need, tailored to your requirements."</p>
+                <div class="owner-stats">
+                    <div class="stat-item"><div class="stat-number">15+</div><div class="stat-label">YEARS EXPERIENCE</div></div>
+                    <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">PROJECTS COMPLETED</div></div>
+                    <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">CUSTOMER SATISFACTION</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="custom-highlight">
+        <h2>WE MAKE AS PER YOUR REQUIREMENTS</h2>
+        <p>Custom grills, almirahs, showcases, and all types of iron fabrication work. Tell us what you need, and we will build it for you with precision and quality.</p>
+    </section>
+    <section class="services" id="services">
+        <div class="section-header">
+            <div class="section-tag">OUR EXPERTISE</div>
+            <h2 class="section-title">PREMIUM <span>IRON WORKS</span></h2>
+            <p class="section-subtitle">Quality craftsmanship for all your iron fabrication needs</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🚪</div>
+                <h3>IRON GRILLS</h3>
+                <p>Custom-designed security grills for windows, doors, and balconies. Combining maximum security with elegant aesthetics. Built as per your design requirements.</p>
+                <div class="service-features">
+                    <span class="service-feature">Window Grills</span>
+                    <span class="service-feature">Door Grills</span>
+                    <span class="service-feature">Balcony Railings</span>
+                    <span class="service-feature">Collapsible Gates</span>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🗄️</div>
+                <h3>ALMIRAHS & STORAGE</h3>
+                <p>Durable iron almirahs and storage solutions built to last generations. Perfect blend of strength and style. Custom sizes available.</p>
+                <div class="service-features">
+                    <span class="service-feature">Steel Almirahs</span>
+                    <span class="service-feature">Lockers</span>
+                    <span class="service-feature">File Cabinets</span>
+                    <span class="service-feature">Custom Storage</span>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🪟</div>
+                <h3>SHOWCASES</h3>
+                <p>Beautiful iron showcases and display units for homes and businesses. Showcase your treasures with pride. Made to your specifications.</p>
+                <div class="service-features">
+                    <span class="service-feature">Display Cases</span>
+                    <span class="service-feature">Shop Showcases</span>
+                    <span class="service-feature">Trophy Cabinets</span>
+                    <span class="service-feature">Custom Designs</span>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🚧</div>
+                <h3>MAIN GATES</h3>
+                <p>Impressive main gates that make a statement. From traditional designs to modern styles, we create gates that enhance your property's security and beauty.</p>
+                <div class="service-features">
+                    <span class="service-feature">Sliding Gates</span>
+                    <span class="service-feature">Swing Gates</span>
+                    <span class="service-feature">Decorative Gates</span>
+                    <span class="service-feature">Industrial Gates</span>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🛡️</div>
+                <h3>SECURITY SOLUTIONS</h3>
+                <p>Heavy-duty security doors, rolling shutters, and reinforcement solutions for maximum protection of your property.</p>
+                <div class="service-features">
+                    <span class="service-feature">Security Doors</span>
+                    <span class="service-feature">Rolling Shutters</span>
+                    <span class="service-feature">Window Bars</span>
+                    <span class="service-feature">Safety Gates</span>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🔨</div>
+                <h3>CUSTOM FABRICATION</h3>
+                <p>Any iron work you can imagine, we can create. From staircases to furniture, we bring your vision to life with expert craftsmanship.</p>
+                <div class="service-features">
+                    <span class="service-feature">Staircases</span>
+                    <span class="service-feature">Iron Beds</span>
+                    <span class="service-feature">Furniture</span>
+                    <span class="service-feature">Custom Projects</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="gallery" id="gallery">
+        <div class="section-header">
+            <div class="section-tag">OUR WORK</div>
+            <h2 class="section-title">PROJECT <span>GALLERY</span></h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item"><div class="gallery-item-bg">🚪</div><div class="gallery-item-overlay"><h4>Custom Main Gate</h4></div></div>
+            <div class="gallery-item"><div class="gallery-item-bg">🗄️</div><div class="gallery-item-overlay"><h4>Steel Almirah</h4></div></div>
+            <div class="gallery-item"><div class="gallery-item-bg">🪟</div><div class="gallery-item-overlay"><h4>Window Grill</h4></div></div>
+            <div class="gallery-item"><div class="gallery-item-bg">🛡️</div><div class="gallery-item-overlay"><h4>Security Door</h4></div></div>
+            <div class="gallery-item"><div class="gallery-item-bg">🪟</div><div class="gallery-item-overlay"><h4>Showcase Unit</h4></div></div>
+            <div class="gallery-item"><div class="gallery-item-bg">🔧</div><div class="gallery-item-overlay"><h4>Custom Fabrication</h4></div></div>
+        </div>
+    </section>
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>GET IN <span>TOUCH</span></h2>
+                <p>Ready to transform your space? Contact us for a free consultation and quote. We build as per your custom requirements.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-text"><h4>LOCATION</h4><p>Pal Engineer Shop<br>Your Local Area</p></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-text"><h4>PHONE</h4><p><a href="tel:9432941362">+91 9432941362</a></p></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">⏰</div>
+                        <div class="contact-text"><h4>WORKING HOURS</h4><p>Monday - Saturday: 9:00 AM - 7:00 PM<br>Sunday: 10:00 AM - 5:00 PM</p></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">💬</div>
+                        <div class="contact-text"><h4>WHATSAPP</h4><p><a href="https://wa.me/919432941362">+91 9432941362</a></p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <form>
+                    <div class="form-group"><label>YOUR NAME</label><input type="text" placeholder="Enter your name" required></div>
+                    <div class="form-group"><label>PHONE NUMBER</label><input type="tel" placeholder="Enter your phone number" required></div>
+                    <div class="form-group"><label>SERVICE NEEDED</label>
+                        <select required>
+                            <option value="">Select a service</option>
+                            <option value="grills">Iron Grills</option>
+                            <option value="almirah">Almirahs & Storage</option>
+                            <option value="showcase">Showcases</option>
+                            <option value="gates">Main Gates</option>
+                            <option value="security">Security Solutions</option>
+                            <option value="custom">Custom Fabrication</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>YOUR MESSAGE</label><textarea placeholder="Tell us about your requirements..."></textarea></div>
+                    <button type="submit" class="form-submit">SEND MESSAGE →</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>PAL ENGINEER SHOP</h3>
+                <p>Crafting premium iron works since years. Your one-stop destination for quality fabrication. We make grills, almirahs, showcases, and more as per your requirements.</p>
+            </div>
+            <div class="footer-links">
+                <h4>SERVICES</h4>
+                <ul>
+                    <li><a href="#services">Iron Grills</a></li>
+                    <li><a href="#services">Almirahs</a></li>
+                    <li><a href="#services">Showcases</a></li>
+                    <li><a href="#services">Main Gates</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>MORE SERVICES</h4>
+                <ul>
+                    <li><a href="#services">Security Doors</a></li>
+                    <li><a href="#services">Rolling Shutters</a></li>
+                    <li><a href="#services">Custom Work</a></li>
+                    <li><a href="#services">Fabrication</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>CONTACT</h4>
+                <ul>
+                    <li><a href="tel:9432941362">📞 9432941362</a></li>
+                    <li><a href="https://wa.me/919432941362">💬 WhatsApp</a></li>
+                    <li><a href="#contact">Get Quote</a></li>
+                    <li><a href="#about">About Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Pal Engineer Shop by Sudip Pal. All Rights Reserved.</p>
+            <div class="social-links">
+                <a href="tel:9432941362">📞</a>
+                <a href="https://wa.me/919432941362">💬</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        window.addEventListener('scroll', () => { const nav = document.querySelector('nav'); if (window.scrollY > 100) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); } });
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+        mobileBtn.addEventListener('click', () => { navLinks.classList.toggle('active'); mobileBtn.classList.toggle('active'); });
+        document.querySelectorAll('.nav-links a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('active'); mobileBtn.classList.remove('active'); }); });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const target = document.querySelector(this.getAttribute('href')); if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); });
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; } }); }, observerOptions);
+        document.querySelectorAll('.service-card, .gallery-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; el.style.transition = 'opacity 0.6s ease, transform 0.6s ease'; observer.observe(el); });
+        document.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); alert('Thank you for your inquiry! Sudip Pal will contact you soon.'); });
+    </script>
+</body>
+</html>
